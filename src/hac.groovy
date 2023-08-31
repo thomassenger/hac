@@ -108,10 +108,13 @@ private void executeGroovy(String serverUrl, String csrfToken, script) {
 
 private void executeFlexSearch(String serverUrl, String csrfToken, script) {
 
+    def maxCount = 1000
+    println "maxCount is: ${maxCount}"
+
     def con = getConnection(serverUrl + '/console/flexsearch/execute', csrfToken)
 
     con.outputStream.withWriter { Writer writer ->
-        writer << "flexibleSearchQuery=" + URLEncoder.encode(script, "UTF-8") + "&commit=false"
+        writer << "flexibleSearchQuery=" + URLEncoder.encode(script, "UTF-8") + "&commit=false&maxCount=${maxCount}"
     }
 
     def json = new JsonSlurper().parseText(con.inputStream.withReader { Reader reader -> reader.text })
@@ -121,7 +124,11 @@ private void executeFlexSearch(String serverUrl, String csrfToken, script) {
         println json.exception.message
     }
 
-    println "Execution time: ${json.executionTime}ms"
+    println "Execution time: ${json.executionTime}ms ; ResultCount: ${json.resultCount}"
+    if (json.resultCount == maxCount) {
+        println("WARNING: you may not see all results!")
+    }
+    println "-------------------------------------------------------------------------------"
 
     def columnWidth = []
     if (json.headers) {
