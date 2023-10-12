@@ -1,12 +1,17 @@
 @Grab(group = 'org.ccil.cowan.tagsoup', module = 'tagsoup', version = '1.2')
 
+import groovy.cli.commons.CliBuilder
+import groovy.cli.commons.OptionAccessor
+
 import groovy.json.JsonSlurper
-import groovy.util.slurpersupport.GPathResult
+import groovy.xml.XmlSlurper
+import groovy.xml.slurpersupport.GPathResult
 
 import javax.net.ssl.*
 import java.security.SecureRandom
-import java.nio.file.Path
-import java.nio.file.Paths
+
+/*import java.nio.file.Path
+import java.nio.file.Paths*/
 
 println System.properties.grep ({it.key.contains("proxy")})
 
@@ -214,7 +219,7 @@ private def getUsername(config, options) {
 }
 
 private def getPassword(config, options) {
- 
+
     // if config file contains for password "-" -> read password from stdin
     if (config[options.env].password && config[options.env].password == '-') {
         println "Expect password from stdin"
